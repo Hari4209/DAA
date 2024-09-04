@@ -1,0 +1,88 @@
+import java.util.*;
+
+class Main {
+
+    static final int N = 200010;
+    static ArrayList<Boolean> vis = new ArrayList<>(N);
+    static ArrayList<ArrayList<Pair>> adj = new ArrayList<>(N);
+
+    static class Pair {
+        int vertex, weight;
+
+        Pair(int vertex, int weight) {
+            this.vertex = vertex;
+            this.weight = weight;
+        }
+    }
+
+    static void prims(int source, int n) {
+        // PriorityQueue for the min-heap, storing edges with their weights
+        PriorityQueue<Pair> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.weight));
+        long mstWeight = 0;
+        
+        // Array to keep track of minimum edge cost to add a vertex to the MST
+        long[] minEdge = new long[n + 1];
+        Arrays.fill(minEdge, Long.MAX_VALUE);
+        minEdge[source] = 0;
+
+        pq.add(new Pair(source, 0));
+
+        while (!pq.isEmpty()) {
+            Pair current = pq.poll();
+            int u = current.vertex;
+            long weight = current.weight;
+
+            // If this vertex is already in MST, skip it
+            if (vis.get(u)) {
+                continue;
+            }
+
+            // Add this vertex to MST
+            vis.set(u, true);
+            mstWeight += weight;
+
+            // Process all adjacent vertices
+            for (Pair neighbor : adj.get(u)) {
+                int v = neighbor.vertex;
+                int edgeWeight = neighbor.weight;
+
+                // If the adjacent vertex is not in MST and the edge weight is less
+                // than the current known minimum edge weight to reach the vertex
+                if (!vis.get(v) && edgeWeight < minEdge[v]) {
+                    minEdge[v] = edgeWeight;
+                    pq.add(new Pair(v, edgeWeight));
+                }
+            }
+        }
+
+        System.out.println(mstWeight);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        for (int i = 0; i < N; i++) {
+            vis.add(false);
+            adj.add(new ArrayList<>());
+        }
+
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
+
+        // Clear the adjacency lists for the valid range of vertices
+        for (int i = 0; i < n; i++) {
+            adj.set(i, new ArrayList<>());
+        }
+
+        for (int i = 0; i < m; i++) {
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            int w = scanner.nextInt();
+            adj.get(x).add(new Pair(y, w));
+            adj.get(y).add(new Pair(x, w));
+        }
+
+        // Run Prim's algorithm starting from vertex 1
+        prims(1, n);
+    }
+}
