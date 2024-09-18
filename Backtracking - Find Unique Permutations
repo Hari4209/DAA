@@ -1,0 +1,37 @@
+def backtrack(path, used, nums, ans):
+    if len(path) == len(nums):
+        ans.append(path[:])  # Append a copy of the current permutation
+        return
+
+    for i in range(len(nums)):
+        if used[i]:
+            continue
+        # To avoid duplicates
+        if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:
+            continue
+
+        used[i] = True
+        path.append(nums[i])
+        backtrack(path, used, nums, ans)
+        used[i] = False
+        path.pop()
+
+def unique_permutations(nums):
+    nums.sort()  # Sort the numbers to ensure duplicates are adjacent
+    ans = []
+    used = [False] * len(nums)
+    backtrack([], used, nums, ans)
+    return ans
+
+if __name__ == "__main__":
+    T = int(input())
+    for _ in range(T):
+        N = int(input())
+        A = list(map(int, input().split()))
+
+        permutations = unique_permutations(A)
+
+        # Output the number of unique permutations
+        print(len(permutations))
+        for perm in permutations:
+            print(" ".join(map(str, perm)))
