@@ -1,0 +1,31 @@
+def backtrack(idx, a, x, subset, ans):
+    if idx == len(a):
+        # Check if the current subset's sum equals x
+        if sum(subset) == x:
+            ans.append(subset[:])  # Add a copy of the subset to the answers
+        return
+
+    # Don't take the current integer
+    backtrack(idx + 1, a, x, subset, ans)
+
+    # Take the current integer
+    subset.append(a[idx])
+    backtrack(idx + 1, a, x, subset, ans)  # Include the current integer
+    subset.pop()  # Backtrack
+
+def subset_sum(a, x):
+    subset = []  # Creating an empty subset
+    ans = []  # To store all the subsets
+    backtrack(0, a, x, subset, ans)
+    return ans
+
+if __name__ == "__main__":
+    n, x = map(int, input().split())
+    a = list(map(int, input().split()))
+
+    subsets = subset_sum(a, x)
+    subsets = [sorted(subset) for subset in subsets]
+    subsets.sort()
+
+    for subset in subsets:
+        print(*subset)
