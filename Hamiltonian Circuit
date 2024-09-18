@@ -1,0 +1,56 @@
+def check(v, next, circuit, mat):
+    # Check if 'next' vertex is adjacent to 'v'
+    if not mat[v][next]:
+        return False
+
+    # Check if 'next' vertex is already in the circuit
+    if next in circuit:
+        return False
+
+    return True
+
+def backtrack(v, n, circuit, ans, mat):
+    if len(circuit) == n:  # Circuit is completed
+        if mat[circuit[0]][v]:  # Check if the starting vertex is adjacent to the last vertex
+            circuit.append(circuit[0])  # Close the circuit
+            ans.append(circuit[:])  # Add a copy of the current circuit to answers
+            circuit.pop()  # Remove the last added element to backtrack
+        return
+
+    for next in range(1, n + 1):
+        # Calling the check function
+        if not check(v, next, circuit, mat):
+            continue
+
+        # If not visited and is adjacent, add it to our candidate solution
+        circuit.append(next)
+        backtrack(next, n, circuit, ans, mat)
+        circuit.pop()  # Backtrack
+
+# Number of vertices and adjacency matrix
+def hamiltonian_circuit(n, mat):
+    circuit = []  # Initially empty circuit
+    ans = []  # To store all the circuits
+
+    for i in range(1, n + 1):  # Fix the starting vertex
+        circuit.append(i)  # Add i to circuit
+        backtrack(i, n, circuit, ans, mat)
+        circuit.pop()  # Remove i from circuit
+
+    return ans
+
+if __name__ == "__main__":
+    n, m = map(int, input().split())
+
+    # Adjacency matrix
+    mat = [[False] * (n + 1) for _ in range(n + 1)]
+    for _ in range(m):
+        a, b = map(int, input().split())
+        mat[a][b] = True
+        mat[b][a] = True
+
+    cycles = hamiltonian_circuit(n, mat)
+    cycles.sort()
+
+    for x in cycles:
+        print(*x)
