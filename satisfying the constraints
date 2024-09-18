@@ -1,0 +1,63 @@
+# Function to check if the current vertex can be added to the path
+def check(v, next, circuit, mat):
+    # To check if v is adjacent to next
+    if mat[v][next] == 0:
+        return False
+
+    # To check if next is already visited
+    if next in circuit:
+        return False
+
+    return True
+
+# Recursive utility function to solve the Hamiltonian cycle problem
+def backtrack(v, n, circuit, ans, mat):
+    # Circuit is completed when circuit length is equal to n
+    if len(circuit) == n:
+        # Check if cycle is completed: starting vertex should be adjacent to the ending vertex
+        if mat[circuit[-1]][circuit[0]] == 1:
+            circuit.append(circuit[0])  # Complete the cycle
+            ans.append(circuit[:])      # Store a copy of the current cycle
+            circuit.pop()               # Remove the starting vertex to continue searching for other cycles
+        return
+
+    for i in range(1, n + 1):
+        # Calling the check function
+        if not check(v, i, circuit, mat):
+            continue
+
+        # If not visited and is adjacent, add it to our candidate solution
+        circuit.append(i)
+        backtrack(i, n, circuit, ans, mat)
+        circuit.pop()  # Remove the last added vertex (backtracking)
+
+# Number of vertices and adjacency matrix
+def hamiltonian_circuit(n, mat):
+    circuit = []  # Initially empty circuit
+    ans = []  # To store all the circuits
+
+    for i in range(1, n + 1):  # Fix the starting vertex
+        circuit.append(i)  # Add i to circuit
+        backtrack(i, n, circuit, ans, mat)
+        circuit.pop()  # Remove i from circuit
+
+    return ans
+
+if __name__ == "__main__":
+    n, m = map(int, input().split())  # Number of vertices and edges
+
+    # Adjacency matrix
+    mat = [[0] * (n + 1) for _ in range(n + 1)]  # Initialize an (n+1)x(n+1) matrix
+
+    for _ in range(m):
+        a, b = map(int, input().split())  # Input the edges
+        mat[a][b] = 1
+        mat[b][a] = 1  # Because the graph is undirected
+
+    # Find all Hamiltonian cycles
+    cycles = hamiltonian_circuit(n, mat)
+    cycles.sort()  # Sort the cycles
+
+    # Output the cycles
+    for cycle in cycles:
+        print(*cycle)
