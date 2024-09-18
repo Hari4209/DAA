@@ -1,0 +1,27 @@
+# cook your dish here
+def backtrack(current, open_count, close_count, max_pairs, result):
+    if len(current) == 2 * max_pairs:
+        result.append(current)
+        return
+
+    if open_count < max_pairs:
+        backtrack(current + '(', open_count + 1, close_count, max_pairs, result)
+
+    if close_count < open_count:
+        backtrack(current + ')', open_count, close_count + 1, max_pairs, result)
+
+def generate_parentheses(n):
+    result = []
+    backtrack('', 0, 0, n, result)
+    return result
+
+if __name__ == "__main__":
+    T = int(input())
+    for _ in range(T):
+        N = int(input())
+        valid_parentheses = generate_parentheses(N)
+
+        # Output the number of valid parentheses
+        print(len(valid_parentheses))
+        for string in valid_parentheses:
+            print(string)
