@@ -1,0 +1,32 @@
+def is_palindrome(s):
+    return s == s[::-1]
+
+def backtrack(start, s, path, result):
+    if start == len(s):
+        result.append(path[:])  # Append a copy of the current path
+        return
+
+    for end in range(start + 1, len(s) + 1):
+        substring = s[start:end]
+        if is_palindrome(substring):
+            path.append(substring)
+            backtrack(end, s, path, result)  # Explore further
+            path.pop()  # Backtrack
+
+def palindrome_partitioning(s):
+    result = []
+    backtrack(0, s, [], result)
+    return result
+
+if __name__ == "__main__":
+    T = int(input())
+    for _ in range(T):
+        S = input().strip()
+        partitions = palindrome_partitioning(S)
+
+        # Output the number of unique partitions
+        print(len(partitions))
+        # Sort partitions lexicographically
+        sorted_partitions = sorted([' '.join(partition) for partition in partitions])
+        for partition in sorted_partitions:
+            print(partition)
